@@ -60,7 +60,13 @@ public class AuthAccount {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AuthAccountRole> accountRoles = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ConfigService> configServices = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ConfigUserService> configUserServices = new ArrayList<>();
 
     @Transient
     public List<AuthRole> getRoles() {
