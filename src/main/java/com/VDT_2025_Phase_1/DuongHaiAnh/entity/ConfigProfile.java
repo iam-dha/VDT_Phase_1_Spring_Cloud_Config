@@ -11,39 +11,28 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "config_service")
+@Table(name = "config_profile")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ConfigService {
+public class ConfigProfile {
     @Id
     @GeneratedValue
     @UuidGenerator
     @Column(name = "id", unique = true, nullable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "owner_id", nullable = false)
-    private AuthAccount owner;
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConfigEntry> entries = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ConfigUserService> userServices = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConfigServiceProfile> serviceProfiles = new ArrayList<>();
 
     @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name= "description", nullable = false)
-    private String description;
-
-    @Column(name = "is_public", nullable = false)
-    private boolean publicVisible = false;
 
     @Column(name = "updated_at", nullable = false)
     private ZonedDateTime updatedAt = ZonedDateTime.now();
