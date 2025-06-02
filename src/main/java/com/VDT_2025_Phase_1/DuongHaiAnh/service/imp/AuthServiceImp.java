@@ -212,12 +212,14 @@ public class AuthServiceImp implements AuthService {
             throw new IllegalArgumentException("Email and password are required");
         }
         String hashedPassword = passwordEncoder.encode(password);
+        String apiKey = jwtUtilsHelper.generateJwtBasedApiKey(account);
         AuthAccount authAccount = AuthAccount.builder()
                 .account(account)
                 .email(email)
                 .password(hashedPassword)
                 .createdAt(ZonedDateTime.now())
                 .isActive(true)
+                .apiKey(apiKey)
                 .build();
 
         AuthAccount savedAccount = authAccountRepository.save(authAccount);

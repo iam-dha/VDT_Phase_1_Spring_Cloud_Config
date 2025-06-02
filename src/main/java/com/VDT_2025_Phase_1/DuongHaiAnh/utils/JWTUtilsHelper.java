@@ -1,6 +1,7 @@
 package com.VDT_2025_Phase_1.DuongHaiAnh.utils;
 
 import com.VDT_2025_Phase_1.DuongHaiAnh.dto.AuthenticatedUserDTO;
+import com.VDT_2025_Phase_1.DuongHaiAnh.dto.AuthorizationDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -15,6 +16,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @Getter
@@ -32,6 +34,21 @@ public class JWTUtilsHelper {
 
     @Value("${jwt.refresh.expiration}")
     private String jwtRefreshTokenExpiration;
+
+    @Value("${jwt.apiKey.secret}")
+    private String jwtApiKeySecret;
+
+    public String generateJwtBasedApiKey(String account){
+        Instant now = Instant.now();
+        SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtApiKeySecret));
+        return Jwts.builder()
+                .subject(account)
+                .claim("type", "API_KEY")
+                .claim("jti", UUID.randomUUID().toString())
+                .issuedAt(Date.from(now))
+                .signWith(key, Jwts.SIG.HS256)
+                .compact();
+    }
 
     public String generateJwtToken(AuthenticatedUserDTO user, String tokenSecret, String tokenExpiration) {
         Instant now = Instant.now();
@@ -80,6 +97,16 @@ public class JWTUtilsHelper {
                 .build()
                 .parseSignedClaims(accessToken)
                 .getPayload();
+    }
+
+    private String extractApiSubject(String apiKey){
+        SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtApiKeySecret));
+        Claims claims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(apiKey)
+                .getPayload();
+        return claims.getSubject();
     }
 
     public String extractSubject(String accessToken, boolean isAccessToken){

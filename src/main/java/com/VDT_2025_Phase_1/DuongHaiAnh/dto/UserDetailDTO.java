@@ -19,4 +19,5 @@ public class UserDetailDTO {
     private LocalDate birthDate;
     private ZonedDateTime createdAt;
     private String avatarUrl;
+    private String apiKey;
 }

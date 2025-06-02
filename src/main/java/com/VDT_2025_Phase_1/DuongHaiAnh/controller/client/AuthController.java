@@ -1,5 +1,6 @@
 package com.VDT_2025_Phase_1.DuongHaiAnh.controller.client;
 
+import com.VDT_2025_Phase_1.DuongHaiAnh.dto.AuthenticatedUserDTO;
 import com.VDT_2025_Phase_1.DuongHaiAnh.dto.AuthorizationDTO;
 import com.VDT_2025_Phase_1.DuongHaiAnh.entity.AuthAccount;
 import com.VDT_2025_Phase_1.DuongHaiAnh.payload.request.AuthRefreshRequest;
@@ -21,8 +22,10 @@ import com.VDT_2025_Phase_1.DuongHaiAnh.payload.request.AuthSignUpRequest;
 import com.VDT_2025_Phase_1.DuongHaiAnh.payload.response.ResponseData;
 
 import javax.crypto.SecretKey;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -104,9 +107,16 @@ public class AuthController {
 
     @GetMapping("/test")
     public ResponseEntity<?> test(){
-        SecretKey key = Jwts.SIG.HS256.key().build();
-        String secretString = Encoders.BASE64.encode(key.getEncoded());
-        System.out.println(secretString);
+//        SecretKey key = Jwts.SIG.HS256.key().build();
+//        String secretString = Encoders.BASE64.encode(key.getEncoded());
+//        System.out.println(secretString);
+        AuthenticatedUserDTO user = AuthenticatedUserDTO.builder()
+                .permissions(new ArrayList<>())
+                .account("testaccout")
+                .userId(UUID.fromString("18dc175f-d556-4964-b46a-2cc65754d600"))
+                .roles(new ArrayList<>())
+                .build();
+        String secretString = jwtUtilsHelper.generateJwtBasedApiKey("dha");
         return ResponseEntity.ok(secretString);
     }
 }

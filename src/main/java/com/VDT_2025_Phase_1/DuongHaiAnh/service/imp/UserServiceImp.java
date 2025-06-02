@@ -56,6 +56,7 @@ public class UserServiceImp implements UserService {
         UserInformation userInformation = authAccount.getUserInformation();
         return UserDetailDTO.builder()
                 .email(authAccount.getEmail())
+                .apiKey(authAccount.getApiKey())
                 .account(authAccount.getAccount())
                 .firstName(userInformation.getFirstName())
                 .lastName(userInformation.getLastName())

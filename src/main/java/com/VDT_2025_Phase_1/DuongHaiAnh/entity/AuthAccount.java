@@ -42,6 +42,9 @@ public class AuthAccount {
     @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt = ZonedDateTime.now();
 
+    @Column(name = "api_key", nullable = false, unique = true)
+    private String apiKey;
+
     // MAPPING
 
     @JsonIgnore
