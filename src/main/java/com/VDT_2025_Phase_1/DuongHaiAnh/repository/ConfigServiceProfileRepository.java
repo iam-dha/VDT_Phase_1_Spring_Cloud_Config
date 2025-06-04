@@ -11,4 +11,5 @@ import java.util.List;
 public interface ConfigServiceProfileRepository extends JpaRepository<ConfigServiceProfile, ConfigServiceProfileId> {
     List<ConfigServiceProfile> findByService_Name(String serviceName);
     boolean existsByProfile_NameAndService_Name(String profileName, String serviceName);
+    ConfigServiceProfile findByProfile_NameAndService_Name(String profileName, String serviceName);
 }

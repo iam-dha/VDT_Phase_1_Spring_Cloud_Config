@@ -9,4 +9,7 @@ import java.util.List;
 public interface ConfigProfileService {
     List<ConfigProfileDTO> getAllServicesProfile(String serviceName);
     ConfigProfileDTO createNewProfile(String serviceName, ConfigProfileRequest request);
+    ConfigProfileDTO getDetailServiceProfile(String serviceName, String profileName);
+    ConfigProfileDTO updateDetailServiceProfile(String serviceName, String profileName, ConfigProfileRequest request);
+    ConfigProfileDTO deleteConfigProfile(String serviceName, String profileName);
 }

@@ -35,17 +35,38 @@ public class ProfileController {
 
     @GetMapping("/services/{serviceName}/profiles/{profileName}")
     public ResponseEntity<?> getDetailServiceProfile(@PathVariable String serviceName, @PathVariable String profileName){
-        return null;
+        ConfigProfileDTO configProfile = configProfileService.getDetailServiceProfile(serviceName, profileName);
+        if (configProfile != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(ResponseData.success("Get profile " + profileName + " for service " + serviceName + " successfully", configProfile));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ResponseData.error("Profile " + profileName + " not found for service " + serviceName));
+        }
     }
 
     @PatchMapping("/services/{serviceName}/profiles/{profileName}")
     public ResponseEntity<?> updateServiceProfile(@PathVariable String serviceName, @PathVariable String profileName, @RequestBody ConfigProfileRequest request){
-        return null;
+        ConfigProfileDTO configProfile = configProfileService.updateDetailServiceProfile(serviceName, profileName, request);
+        if (configProfile != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(ResponseData.success("Update profile " + profileName + " for service " + serviceName + " successfully", configProfile));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ResponseData.error("Profile " + profileName + " not found for service " + serviceName));
+        }
     }
 
     @DeleteMapping("/services/{serviceName}/profiles/{profileName}")
     public ResponseEntity<?> deleteServiceProfile(@PathVariable String serviceName, @PathVariable String profileName) {
-        return null;
+        ConfigProfileDTO configProfile = configProfileService.deleteConfigProfile(serviceName, profileName);
+        if (configProfile != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(ResponseData.success("Delete profile " + profileName + " for service " + serviceName + " successfully", configProfile));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ResponseData.error("Profile " + profileName + " not found for service " + serviceName));
+        }
     }
 
 }
