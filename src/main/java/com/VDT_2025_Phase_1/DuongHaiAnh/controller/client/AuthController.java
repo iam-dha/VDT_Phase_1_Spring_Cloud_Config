@@ -105,18 +105,10 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("Log out Successfully", refreshToken));
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> test(){
-//        SecretKey key = Jwts.SIG.HS256.key().build();
-//        String secretString = Encoders.BASE64.encode(key.getEncoded());
-//        System.out.println(secretString);
-        AuthenticatedUserDTO user = AuthenticatedUserDTO.builder()
-                .permissions(new ArrayList<>())
-                .account("testaccout")
-                .userId(UUID.fromString("18dc175f-d556-4964-b46a-2cc65754d600"))
-                .roles(new ArrayList<>())
-                .build();
-        String secretString = jwtUtilsHelper.generateJwtBasedApiKey("dha");
-        return ResponseEntity.ok(secretString);
+    @PostMapping("/test")
+    public ResponseEntity<?> test(@RequestBody String name){
+        System.out.println(name);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseData.success("Test Successfully", name));
     }
 }

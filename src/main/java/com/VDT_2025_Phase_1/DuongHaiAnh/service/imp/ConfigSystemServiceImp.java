@@ -60,7 +60,7 @@ public class ConfigSystemServiceImp implements ConfigSystemService {
 
     @Override
     @Transactional
-    public ConfigServiceDTO createNewServices(@RequestBody ConfigServiceRequest configServiceRequest) {
+    public ConfigServiceDTO createNewServices( ConfigServiceRequest configServiceRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new IllegalStateException("Invalid authentication");
@@ -101,7 +101,7 @@ public class ConfigSystemServiceImp implements ConfigSystemService {
 
     @Override
     @Transactional
-    public ConfigServiceDTO updateService(String serviceName, @RequestBody ConfigServiceRequest configServiceRequest) {
+    public ConfigServiceDTO updateService(String serviceName, ConfigServiceRequest configServiceRequest) {
         ConfigService configService = configServiceRepository.findByName(serviceName);
         if (configService == null) {
             throw new IllegalArgumentException("Service not found");
@@ -119,6 +119,16 @@ public class ConfigSystemServiceImp implements ConfigSystemService {
         configService.setUpdatedAt(ZonedDateTime.now());
         ConfigService updatedConfig = configServiceRepository.save(configService);
         return parseToDTO(updatedConfig);
+    }
+    @Override
+    @Transactional
+    public ConfigServiceDTO deleteService(String serviceName) {
+        ConfigService configService = configServiceRepository.findByName(serviceName);
+        if (configService == null) {
+            throw new IllegalArgumentException("Service not found");
+        }
+        configServiceRepository.delete(configService);
+        return parseToDTO(configService);
     }
 }
 

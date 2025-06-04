@@ -2,10 +2,7 @@ package com.VDT_2025_Phase_1.DuongHaiAnh.entity.SerializableKey;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -15,6 +12,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ConfigServiceProfileId {
     @Column(name = "service_id", nullable = false)
     private UUID serviceId;

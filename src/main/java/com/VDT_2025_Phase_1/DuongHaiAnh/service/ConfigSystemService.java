@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface ConfigSystemService {
     List<ConfigServiceDTO> getAllServices();
-    ConfigServiceDTO createNewServices(@RequestBody ConfigServiceRequest configServiceRequest);
+    ConfigServiceDTO createNewServices( ConfigServiceRequest configServiceRequest);
     ConfigServiceDTO getDetailService(String serviceName);
-    ConfigServiceDTO updateService(String serviceName, @RequestBody ConfigServiceRequest configServiceRequest);
+    ConfigServiceDTO updateService(String serviceName, ConfigServiceRequest configServiceRequest);
+    ConfigServiceDTO deleteService(String serviceName);
 }

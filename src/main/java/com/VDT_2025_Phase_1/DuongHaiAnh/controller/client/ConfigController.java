@@ -43,11 +43,12 @@ public class ConfigController {
     @PatchMapping("/services/{serviceName}")
     public ResponseEntity<?> updateService(@PathVariable String serviceName, @RequestBody ConfigServiceRequest configServiceRequest){
         ConfigServiceDTO updatedService = configSystemService.updateService(serviceName, configServiceRequest);
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("Update Service success fully", updatedService));
     }
 
-    @DeleteMapping("/services/{serviceId}")
-    public ResponseEntity<?> deleteService(@PathVariable String serviceId){
-        return null;
+    @DeleteMapping("/services/{serviceName}")
+    public ResponseEntity<?> deleteService(@PathVariable String serviceName){
+        ConfigServiceDTO deletedService = configSystemService.deleteService(serviceName);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("Delete Service success fully", deletedService));
     }
 }
