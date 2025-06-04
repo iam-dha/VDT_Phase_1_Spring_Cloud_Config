@@ -239,8 +239,9 @@ public class AuthServiceImp implements AuthService {
                 .account(savedAccount)
                 .role(userRole)
                 .build();
-
         authAccountRoleRepository.save(accountRole);
+        savedAccount.setAccountRoles(new ArrayList<>(List.of(accountRole)));
+        authAccountRepository.save(savedAccount);
         String avatarUrl = authRegisterInfoRequest.getAvatarUrl();
         String firstName = (authRegisterInfoRequest.getFirstName() != null && !authRegisterInfoRequest.getFirstName().isBlank()) ? authRegisterInfoRequest.getFirstName() : "Unknown";
         String lastName = (authRegisterInfoRequest.getLastName() != null && !authRegisterInfoRequest.getLastName().isBlank()) ? authRegisterInfoRequest.getLastName() : "User";

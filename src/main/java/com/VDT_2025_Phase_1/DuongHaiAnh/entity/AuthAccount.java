@@ -73,6 +73,9 @@ public class AuthAccount {
 
     @Transient
     public List<AuthRole> getRoles() {
-        return accountRoles.stream().map(AuthAccountRole::getRole).collect(Collectors.toList());
+        if (accountRoles == null) return List.of(); // tránh NPE
+        return accountRoles.stream()
+                .map(AuthAccountRole::getRole)
+                .toList();
     }
 }
