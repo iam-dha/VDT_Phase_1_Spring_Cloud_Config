@@ -1,6 +1,7 @@
 package com.VDT_2025_Phase_1.DuongHaiAnh.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,11 +22,17 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class CustomFilterSecurity {
 
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+
     @Autowired
     CustomUserDetailService customUserDetailService;
 
     @Autowired
     CustomJwtFilter customJwtFilter;
+
+    @Autowired
+    CustomApiKeyFilter customApiKeyFilter;
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
@@ -43,12 +50,14 @@ public class CustomFilterSecurity {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**" /* "auth/**"*/)
+                        .requestMatchers("/auth/**", "/system/config/**" /* "auth/**"*/)
                         .permitAll()
                         .anyRequest()
                         .authenticated()
 
-                ).addFilterBefore(customJwtFilter, UsernamePasswordAuthenticationFilter.class);
+                )
+                .addFilterBefore(customApiKeyFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(customJwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

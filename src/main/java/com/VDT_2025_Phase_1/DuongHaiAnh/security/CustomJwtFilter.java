@@ -34,6 +34,11 @@ public class CustomJwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = getAccessTokenFromHeader(request);
+        String path = request.getServletPath();
+        if (path.startsWith("/auth") || path.startsWith("/system/config")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try{
             if(StringUtils.hasText(accessToken) && jwtUtilsHelper.validateAccessToken(accessToken)){
                 String username = jwtUtilsHelper.extractSubject(accessToken, true);

@@ -1,9 +1,12 @@
 package com.VDT_2025_Phase_1.DuongHaiAnh.controller.client;
 
+import com.VDT_2025_Phase_1.DuongHaiAnh.dto.ConfigEntryDTO;
 import com.VDT_2025_Phase_1.DuongHaiAnh.dto.ConfigProfileDTO;
 import com.VDT_2025_Phase_1.DuongHaiAnh.dto.ConfigServiceDTO;
+import com.VDT_2025_Phase_1.DuongHaiAnh.payload.request.ConfigEntryRequest;
 import com.VDT_2025_Phase_1.DuongHaiAnh.payload.request.ConfigProfileRequest;
 import com.VDT_2025_Phase_1.DuongHaiAnh.payload.response.ResponseData;
+import com.VDT_2025_Phase_1.DuongHaiAnh.service.ConfigEntryService;
 import com.VDT_2025_Phase_1.DuongHaiAnh.service.ConfigProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,9 @@ public class ProfileController {
 
     @Autowired
     private ConfigProfileService configProfileService;
+
+    @Autowired
+    private ConfigEntryService configEntryService;
 
     @GetMapping("/services/{serviceName}/profiles")
     public ResponseEntity<?> getAllServicesProfile(@PathVariable String serviceName){
@@ -67,6 +73,23 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ResponseData.error("Profile " + profileName + " not found for service " + serviceName));
         }
+    }
+
+    @GetMapping("/services/{serviceName}/profiles-entries/{profileName}")
+    public ResponseEntity<?> getProfileEntries(
+            @PathVariable String serviceName,
+            @PathVariable String profileName) {
+        List<ConfigEntryDTO> entries = configEntryService.getAllConfigEntries(serviceName, profileName);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("Get entries for profile " + profileName + " in service " + serviceName + " successfully", entries));
+    }
+
+    @PutMapping("/services/{serviceName}/profiles-entries/{profileName}")
+    public ResponseEntity<?> updateProfileEntries(
+            @PathVariable String serviceName,
+            @PathVariable String profileName,
+            @RequestBody List<ConfigEntryRequest> requests){
+        configEntryService.updateConfigEntry(serviceName, profileName, requests);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("Update entries for profile " + profileName + " in service " + serviceName + " successfully", null));
     }
 
 }
