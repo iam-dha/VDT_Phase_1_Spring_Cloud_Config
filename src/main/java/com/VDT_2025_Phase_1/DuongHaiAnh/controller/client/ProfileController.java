@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/config")
+@RequestMapping("/api/v1/config")
 public class ProfileController {
 
     @Autowired

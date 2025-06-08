@@ -37,21 +37,21 @@ public class CustomApiKeyFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String path = request.getServletPath();
-        if (!path.startsWith("/system/config")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+//        String path = request.getServletPath();
+//        if (!path.startsWith("/system/config")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Apikey ")) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("Missing or invalid Authorization header (expected 'Apikey <token>')");
+            filterChain.doFilter(request, response);
+//            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+//            response.getWriter().write("Missing or invalid Authorization header (expected 'Apikey <token>')");
             return;
         }
 
         String apiKey = authHeader.substring(7);
-
         try {
             Claims claims = Jwts.parser()
                     .verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtApiKeySecret)))
@@ -74,6 +74,7 @@ public class CustomApiKeyFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (JwtException | UsernameNotFoundException e) {
+            System.out.println(e);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write("Invalid API Key: " + e.getMessage());
             return;

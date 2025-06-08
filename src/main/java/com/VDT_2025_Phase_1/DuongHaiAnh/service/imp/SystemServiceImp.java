@@ -11,7 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SystemServiceImp implements SystemService {
@@ -23,15 +25,12 @@ public class SystemServiceImp implements SystemService {
     private ConfigServiceProfileRepository configServiceProfileRepository;
 
     @Override
-    public String getConfigContent(String account, String service, String profile) {
+    public Map<String, Object> getConfigContent(String service, String profile) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
             throw new AccessDeniedException("No authentication found.");
         }
-        String tokenAccount = (String) auth.getPrincipal();
-        if (!tokenAccount.equals(account)) {
-            throw new AccessDeniedException("Invalid Token");
-        }
+        String account = (String) auth.getPrincipal();
         ConfigServiceProfile profileLink = configServiceProfileRepository
                 .findByProfile_NameAndService_Name(profile, service);
 
@@ -40,6 +39,10 @@ public class SystemServiceImp implements SystemService {
         }
 
         List<ConfigEntry> entries = profileLink.getProfile().getEntries();
-        return yamlBuilderHelper.buildYaml(entries);
+        Map<String, Object> configMap = new LinkedHashMap<>();
+        for (ConfigEntry entry : entries) {
+            configMap.put(entry.getKey(), entry.getValue());
+        }
+        return configMap;
     }
 }

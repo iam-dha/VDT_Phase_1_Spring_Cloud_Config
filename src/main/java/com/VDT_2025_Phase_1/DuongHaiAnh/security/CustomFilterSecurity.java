@@ -23,8 +23,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class CustomFilterSecurity {
 
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
+//    @Value("${server.servlet.context-path}")
+//    private String contextPath;
 
     @Autowired
     CustomUserDetailService customUserDetailService;
@@ -52,7 +52,7 @@ public class CustomFilterSecurity {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/system/config/**" /* "auth/**"*/)
+                        .requestMatchers("/api/v1/auth/**", "/**" /* "auth/**"*/)
                         .permitAll()
                         .anyRequest()
                         .authenticated()
