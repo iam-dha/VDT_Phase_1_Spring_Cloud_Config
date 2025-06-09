@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("")
@@ -22,28 +20,34 @@ public class ServerConfigController {
     @Autowired
     private SystemService systemService;
 
-    @GetMapping("{service}/{profile}")
+    @GetMapping("{service}/{profiles}")
     public ResponseEntity<?> getConfigFileWithoutLabel(
             @PathVariable String service,
-            @PathVariable String profile) {
-        return getConfigFile(service, profile, "main"); // default label
+            @PathVariable String profiles) {
+        return getConfigFile(service, profiles, "main"); // default label
     }
 
-    @GetMapping("{service}/{profile}/{label}")
+    @GetMapping("{service}/{profiles}/{label}")
     public ResponseEntity<?> getConfigFile(
             @PathVariable String service,
-            @PathVariable String profile,
+            @PathVariable String profiles,
             @PathVariable String label) {
-        Map<String, Object> content = systemService.getConfigContent(service, profile);
-        Map<String, Object> propertySource = Map.of(
-                "name", "system-config",
-                "source", content
-        );
+        String[] profileList = profiles.split(",");
+        List<Map<String, Object>> propertySources = new ArrayList<>();
+        for(String profile : profileList){
+            Map<String, Object> source = systemService.getConfigContent(service, profile.trim());
+            if (!source.isEmpty()) {
+                propertySources.add(Map.of(
+                        "name", service + "-" + profile,
+                        "source", source
+                ));
+            }
+        }
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("name", service);
-        response.put("profiles", List.of(profile));
+        response.put("profiles", Arrays.asList(profileList));
         response.put("label", label);
-        response.put("propertySources", List.of(propertySource));
+        response.put("propertySources", propertySources);
         return ResponseEntity.ok(response);
     }
     //Test function
