@@ -75,7 +75,7 @@ public class ConfigSystemServiceImp implements ConfigSystemService {
             throw new IllegalArgumentException("Service name cannot be empty");
         }
 
-        if (configServiceRepository.existsByName(configName)) {
+        if (configServiceRepository.existsByNameAndOwner_Account(configName, account)) {
             throw new IllegalStateException("Service name already exists");
         }
         ConfigService newConfigService = ConfigService.builder()
@@ -92,7 +92,16 @@ public class ConfigSystemServiceImp implements ConfigSystemService {
 
     @Override
     public ConfigServiceDTO getDetailService(String serviceName) {
-        ConfigService configService = configServiceRepository.findByName(serviceName);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("Invalid authentication");
+        }
+        String account = (String) authentication.getPrincipal();
+        AuthAccount authAccount = authAccountRepository.findByAccount(account);
+        if (authAccount == null) {
+            throw new IllegalStateException("Account not found");
+        }
+        ConfigService configService = configServiceRepository.findByNameAndOwner_Account(serviceName, account);
         if (configService == null) {
             throw new IllegalArgumentException("Service not found");
         }
@@ -102,12 +111,21 @@ public class ConfigSystemServiceImp implements ConfigSystemService {
     @Override
     @Transactional
     public ConfigServiceDTO updateService(String serviceName, ConfigServiceRequest configServiceRequest) {
-        ConfigService configService = configServiceRepository.findByName(serviceName);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("Invalid authentication");
+        }
+        String account = (String) authentication.getPrincipal();
+        AuthAccount authAccount = authAccountRepository.findByAccount(account);
+        if (authAccount == null) {
+            throw new IllegalStateException("Account not found");
+        }
+        ConfigService configService = configServiceRepository.findByNameAndOwner_Account(serviceName, account);
         if (configService == null) {
             throw new IllegalArgumentException("Service not found");
         }
         if (configServiceRequest.getName() != null && !configServiceRequest.getName().isBlank()) {
-            if (!configService.getName().equals(configServiceRequest.getName()) && configServiceRepository.existsByName(configServiceRequest.getName())) {
+            if (!configService.getName().equals(configServiceRequest.getName()) && configServiceRepository.existsByNameAndOwner_Account(configServiceRequest.getName(), account)) {
                 throw new IllegalStateException("New service name already exists");
             }
             configService.setName(configServiceRequest.getName());
@@ -123,7 +141,16 @@ public class ConfigSystemServiceImp implements ConfigSystemService {
     @Override
     @Transactional
     public ConfigServiceDTO deleteService(String serviceName) {
-        ConfigService configService = configServiceRepository.findByName(serviceName);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("Invalid authentication");
+        }
+        String account = (String) authentication.getPrincipal();
+        AuthAccount authAccount = authAccountRepository.findByAccount(account);
+        if (authAccount == null) {
+            throw new IllegalStateException("Account not found");
+        }
+        ConfigService configService = configServiceRepository.findByNameAndOwner_Account(serviceName, account);
         if (configService == null) {
             throw new IllegalArgumentException("Service not found");
         }

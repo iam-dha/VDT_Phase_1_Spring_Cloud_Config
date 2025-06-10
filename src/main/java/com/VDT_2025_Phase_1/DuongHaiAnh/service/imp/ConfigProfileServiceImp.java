@@ -54,14 +54,14 @@ public class ConfigProfileServiceImp implements ConfigProfileService {
         if (account == null || account.isEmpty()) {
             throw new IllegalStateException("Account information is missing");
         }
-        ConfigService configService = configServiceRepository.findByName(serviceName);
+        ConfigService configService = configServiceRepository.findByNameAndOwner_Account(serviceName, account);
         if (configService == null) {
             throw new IllegalArgumentException("Service not found: " + serviceName);
         }
         if( !configService.getOwner().getAccount().equals(account)){
             throw new AccessDeniedException("You do not have permission to access this service: " + serviceName);
         }
-        List<ConfigServiceProfile> configServiceProfiles = configServiceProfileRepository.findByService_Name(serviceName);
+        List<ConfigServiceProfile> configServiceProfiles = configServiceProfileRepository.findByService_NameAndService_Owner_Account(serviceName, account);
         return configServiceProfiles.stream()
                 .map(this::parseToDTO)
                 .toList();
@@ -78,7 +78,7 @@ public class ConfigProfileServiceImp implements ConfigProfileService {
         if (account == null || account.isEmpty()) {
             throw new IllegalStateException("Account information is missing");
         }
-        ConfigService configService = configServiceRepository.findByName(serviceName);
+        ConfigService configService = configServiceRepository.findByNameAndOwner_Account(serviceName, account);
         if (configService == null) {
             throw new IllegalArgumentException("Service not found: " + serviceName);
         }
@@ -86,7 +86,7 @@ public class ConfigProfileServiceImp implements ConfigProfileService {
             throw new AccessDeniedException("You do not have permission to access this service: " + serviceName);
         }
         String profileName = request.getName();
-        if (configServiceProfileRepository.existsByProfile_NameAndService_Name(profileName, serviceName)) {
+        if (configServiceProfileRepository.existsByProfile_NameAndService_NameAndService_Owner_Account(profileName, serviceName, account)) {
             throw new IllegalArgumentException("Profile with name " + profileName + " already exists for service " + serviceName);
         }
         ConfigProfile newProfile = ConfigProfile.builder()
@@ -122,7 +122,7 @@ public class ConfigProfileServiceImp implements ConfigProfileService {
         if (account == null || account.isEmpty()) {
             throw new IllegalStateException("Account information is missing");
         }
-        ConfigServiceProfile configProfileService = configServiceProfileRepository.findByProfile_NameAndService_Name(profileName, serviceName);
+        ConfigServiceProfile configProfileService = configServiceProfileRepository.findByProfile_NameAndService_NameAndService_Owner_Account(profileName, serviceName, account);
         if (configProfileService == null) {
             throw new IllegalArgumentException("Profile " + profileName + " not found for service " + serviceName);
         }
@@ -143,7 +143,7 @@ public class ConfigProfileServiceImp implements ConfigProfileService {
         if (account == null || account.isEmpty()) {
             throw new IllegalStateException("Account information is missing");
         }
-        ConfigServiceProfile configServiceProfile = configServiceProfileRepository.findByProfile_NameAndService_Name(profileName,  serviceName);
+        ConfigServiceProfile configServiceProfile = configServiceProfileRepository.findByProfile_NameAndService_NameAndService_Owner_Account(profileName,  serviceName, account);
         if (configServiceProfile == null) {
             throw new IllegalArgumentException("Profile " + profileName + " not found for service " + serviceName);
         }
@@ -155,7 +155,7 @@ public class ConfigProfileServiceImp implements ConfigProfileService {
             throw new IllegalStateException("ConfigProfile is missing in ConfigServiceProfile");
         }
         String newProfileName = request.getName();
-        if(!newProfileName.equals(profileName) && configServiceProfileRepository.existsByProfile_NameAndService_Name(newProfileName, serviceName)){
+        if(!newProfileName.equals(profileName) && configServiceProfileRepository.existsByProfile_NameAndService_NameAndService_Owner_Account(newProfileName, serviceName, account)){
             throw new IllegalArgumentException("Profile with name " + newProfileName + " already exists for service " + serviceName);
         }
         profile.setUpdatedAt(ZonedDateTime.now());
@@ -179,7 +179,7 @@ public class ConfigProfileServiceImp implements ConfigProfileService {
         if (account == null || account.isEmpty()) {
             throw new IllegalStateException("Account information is missing");
         }
-        ConfigServiceProfile configServiceProfile = configServiceProfileRepository.findByProfile_NameAndService_Name(profileName, serviceName);
+        ConfigServiceProfile configServiceProfile = configServiceProfileRepository.findByProfile_NameAndService_NameAndService_Owner_Account(profileName, serviceName, account);
         if (configServiceProfile == null) {
             throw new IllegalArgumentException("Profile " + profileName + " not found for service " + serviceName);
         }

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ConfigServiceProfileRepository extends JpaRepository<ConfigServiceProfile, ConfigServiceProfileId> {
-    List<ConfigServiceProfile> findByService_Name(String serviceName);
-    boolean existsByProfile_NameAndService_Name(String profileName, String serviceName);
-    ConfigServiceProfile findByProfile_NameAndService_Name(String profileName, String serviceName);
+    List<ConfigServiceProfile> findByService_NameAndService_Owner_Account(String serviceName, String account);
+    boolean existsByProfile_NameAndService_NameAndService_Owner_Account(String profileName, String serviceName,String account);
+    ConfigServiceProfile findByProfile_NameAndService_NameAndService_Owner_Account(String profileName, String serviceName, String account);
 }

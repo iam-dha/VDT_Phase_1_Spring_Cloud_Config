@@ -9,4 +9,5 @@ import java.util.List;
 public interface ConfigEntryService {
     List<ConfigEntryDTO> getAllConfigEntries(String serviceName, String profileName);
     void updateConfigEntry(String serviceName, String profileName, List<ConfigEntryRequest> requests);
+    List<ConfigEntryDTO> gettAllSharedConfigEntries(String account, String serviceName, String profileName);
 }

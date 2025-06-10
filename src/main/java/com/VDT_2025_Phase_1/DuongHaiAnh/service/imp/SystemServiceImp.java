@@ -32,7 +32,7 @@ public class SystemServiceImp implements SystemService {
         }
         String account = (String) auth.getPrincipal();
         ConfigServiceProfile profileLink = configServiceProfileRepository
-                .findByProfile_NameAndService_Name(profile, service);
+                .findByProfile_NameAndService_NameAndService_Owner_Account(profile, service, account);
 
         if (profileLink == null || !profileLink.getService().getOwner().getAccount().equals(account)) {
             throw new AccessDeniedException("Config not found or permission denied.");

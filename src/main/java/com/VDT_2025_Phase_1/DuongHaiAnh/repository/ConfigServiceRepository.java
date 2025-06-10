@@ -11,6 +11,6 @@ import java.util.UUID;
 @Repository
 public interface ConfigServiceRepository extends JpaRepository<ConfigService, UUID> {
     List<ConfigService> findByOwner_Account(String account);
-    boolean existsByName(String name);
-    ConfigService findByName(String name);
+    boolean existsByNameAndOwner_Account(String name, String account);
+    ConfigService findByNameAndOwner_Account(String name, String account);
 }

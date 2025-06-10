@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/system/config")
 public class ServerConfigController {
 
     @Autowired

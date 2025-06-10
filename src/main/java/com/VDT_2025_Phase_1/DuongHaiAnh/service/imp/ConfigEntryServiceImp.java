@@ -53,12 +53,9 @@ public class ConfigEntryServiceImp implements ConfigEntryService {
         if (account == null || account.isEmpty()) {
             throw new IllegalStateException("Account information is missing");
         }
-        ConfigServiceProfile configProfileService = configServiceProfileRepository.findByProfile_NameAndService_Name(profileName, serviceName);
+        ConfigServiceProfile configProfileService = configServiceProfileRepository.findByProfile_NameAndService_NameAndService_Owner_Account(profileName, serviceName, account);
         if(configProfileService == null){
             throw new IllegalStateException("Profile " + profileName + " for service " + serviceName + " does not exist");
-        }
-        if(!configProfileService.getService().getOwner().getAccount().equals(account)) {
-            throw new IllegalStateException("You do not have permission to access this profile");
         }
         List<ConfigEntry> entries = configProfileService.getProfile().getEntries();
         return entries.stream().map(this::parseToDTO).toList();
@@ -77,7 +74,7 @@ public class ConfigEntryServiceImp implements ConfigEntryService {
             throw new IllegalStateException("Account information is missing");
         }
 
-        ConfigServiceProfile configProfileService = configServiceProfileRepository.findByProfile_NameAndService_Name(profileName, serviceName);
+        ConfigServiceProfile configProfileService = configServiceProfileRepository.findByProfile_NameAndService_NameAndService_Owner_Account(profileName, serviceName, account);
         if (configProfileService == null) {
             throw new IllegalStateException("Profile " + profileName + " for service " + serviceName + " does not exist");
         }
@@ -114,7 +111,6 @@ public class ConfigEntryServiceImp implements ConfigEntryService {
                         .build();
                 entryList.add(newEntry);
             } else {
-                // Cập nhật
                 ConfigEntry existing = entryList.stream()
                         .filter(e -> req.getId().equals(e.getId()))
                         .findFirst()
@@ -126,8 +122,33 @@ public class ConfigEntryServiceImp implements ConfigEntryService {
                 existing.setUpdatedAt(ZonedDateTime.now());
             }
         }
-
-        // Không cần set lại list entries → giữ nguyên reference, chỉ thao tác trên nó
+        profile.setUpdatedAt(ZonedDateTime.now());
         configProfileRepository.save(profile);
     }
+
+    @Override
+    public List<ConfigEntryDTO> gettAllSharedConfigEntries(String owner, String serviceName, String profileName) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("User is not authenticated");
+        }
+        String account = (String) authentication.getPrincipal();
+        if (account == null || account.isEmpty()) {
+            throw new IllegalStateException("Account information is missing");
+        }
+        ConfigServiceProfile configProfileService = configServiceProfileRepository.findByProfile_NameAndService_NameAndService_Owner_Account(profileName, serviceName, owner);
+        if(configProfileService == null){
+            throw new IllegalStateException("Profile " + profileName + " for service " + serviceName + " does not exist");
+        }
+        if(configProfileService.getService().isPublicVisible()) {
+            List<ConfigEntry> entries = configProfileService.getProfile().getEntries();
+            return entries.stream().map(this::parseToDTO).toList();
+        }
+        if(!configProfileService.getService().getOwner().getAccount().equals(account)) {
+            throw new IllegalStateException("This profile is not public!");
+        }
+        List<ConfigEntry> entries = configProfileService.getProfile().getEntries();
+        return entries.stream().map(this::parseToDTO).toList();
+    }
 }
+

@@ -52,7 +52,7 @@ public class CustomFilterSecurity {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/**" /* "auth/**"*/)
+                        .requestMatchers("/api/v1/auth/**", "/system/config/**" /* "auth/**"*/)
                         .permitAll()
                         .anyRequest()
                         .authenticated()
